@@ -56,7 +56,7 @@ class SisacApiClient:
     def home_page(self, session_id):
         cookies = dict(JSESSIONID=session_id)
         sisac_request = http_request.get(self.settings.SISAC_HOME_URL, verify=False, cookies=cookies)
-        if sisac_request.url != self.settings.SISAC_HOME_URL:
+        if sisac_request.url != self.settings.SISAC_HOME_URL or "Tipo de conta" in str(sisac_request.content):
             raise AuthenticationErrorException()
         else:
             sisac_parser = SisacParser(sisac_request.content)
@@ -65,4 +65,3 @@ class SisacApiClient:
                 "total-hours"  : sisac_parser.total_hours,
                 "categories"   : sisac_parser.categories
             }
-

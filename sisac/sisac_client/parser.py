@@ -36,17 +36,13 @@ class SisacParser:
         self.__total_hours = self.soup.find_all('h2', text=re.compile(r'\bTotal de Horas em Atividades Complementares\b'))[0].string[45:]
 
     def __get_categories(self):
-        categories = []
         categories_html = self.soup.find_all('h2', text=re.compile(r'\bTipo de Atividade\b'))
         categories_names = [categorie.string[19:] for categorie in categories_html]
         activities_tables_html = self.soup.find_all('table', {"class": "tabela_ver_freq"})
+        categories = [{"name": categorie, "activities": []} for categorie in categories_names]
         i = 0
         for activity_table in activities_tables_html:
-            categorie = {
-                "name": categories_names[i],
-                "activities": []
-            }
-            i+=1
+            categorie = categories[i]
             activities_html = activity_table.tbody.find_all('tr')
             for activity in activities_html:
                 activity_attributes = activity.find_all('td')
@@ -56,8 +52,7 @@ class SisacParser:
                     "professor": activity_attributes[2].string,
                     "hours": float(activity_attributes[3].string.replace(',','.'))
                 })
-
-                categories.append(categorie)
+            i = i + 1
         
         self.__categories = categories
     
