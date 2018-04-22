@@ -1,0 +1,7 @@
+Django
+djangorestframework
+markdown
+django-filter
+pybase64
+requests
+beautifulsoup4
