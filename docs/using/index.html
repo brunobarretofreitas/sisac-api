@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  <title>API - SISAC-API</title>
+  
+
+  <link rel="shortcut icon" href="../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "API";
+    var mkdocs_page_input_path = "using.md";
+    var mkdocs_page_url = "/using/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script>
+  <script src="../js/theme.js"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> SISAC-API</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="..">Início</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href="./">API</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#utilizando-a-api">Utilizando a API</a></li>
+                
+                    <li><a class="toctree-l4" href="#entendendo-o-processo-de-login">Entendendo o processo de login</a></li>
+                
+                    <li><a class="toctree-l4" href="#iniciando-um-processo-de-login">Iniciando um processo de login</a></li>
+                
+                    <li><a class="toctree-l4" href="#obtendo-informacoes-do-aluno">Obtendo ataividades complementares do aluno</a></li>
+            
+            </ul>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../tecnologies/">Tecnologias</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
+        <a class="" href="../about/">Sobre</a>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">SISAC-API</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>API</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        
+          <a href="https://github.com/brunobarretofreitas/sisac-api" class="icon icon-github"> Edit on GitHub</a>
+        
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="utilizando-a-api">Utilizando a API</h1>
+<p>Exibir quais são os serviços disponíveis e o funcionamento da API</p>
+<h2 id="entendendo-o-processo-de-login">Entendendo o processo de login</h2>
+<p>Para realizar login no <a href="https://sistemas.quixada.ufc.br/apps/sisac/">SISAC</a>
+é necessário informar quatro campos básicos:</p>
+<ul>
+<li>Matrícula</li>
+<li>Senha</li>
+<li>Tipo de usuário</li>
+<li>Valor para o captcha</li>
+</ul>
+<p>O tipo de usuário nesse caso é fixo pois apenas trataremos de alunos nessa API.</p>
+<p>O valor para o captcha atualmente é informado de forma manual, onde o usuário que irá realizar
+o login na aplicação deverá informar qual o valor presente na imagem a ser exibida (assim como
+acontece no login tradicional via site oficial).</p>
+<h2 id="iniciando-um-processo-de-login">Iniciando um processo de login</h2>
+<p>Primeiramente, deverá ser necessário realizar uma solicitação GET para o endpoint <b>/login</b>, que será
+responsável por gerar um identificador de sessão e a imagem do captcha associada a esta sessão no formato base64 </p>
+<p><strong><em>Exemplo de requisição</em></strong></p>
+<pre><code class="http">  GET  http://host-da-api/login
+</code></pre>
+
+<p><strong><em>Exemplo de retorno</em></strong></p>
+<pre><code class="json">  {
+    &quot;session_id&quot;: &quot;ABCDE12345&quot;,
+    &quot;captcha_image&quot;: &quot;data:image/png;base64,/9j/4AAQSkZJRgABAgAAAQABAAD/2wBDAAg[...] <b>Texto muito longo</b>&quot;
+  }
+</code></pre>
+
+<ul>
+<li>session_id: Identificador da sessão iniciada com a aplicação SISAC, no qual será necessário para realizar o login assim como acessar as informações do aluno</li>
+<li>captcha_image: Imagem do captcha associado a sessão no formato base64, que pode ser utilizado facilmente no html de uma aplicação front end, possibilitando a 
+  visualização da imagem.
+</li>
+</ul>
+
+<p>Após estar com estas informações em mãos, o usuário deverá realizar uma requisição POST para o mesmo endpoint, fornecendo
+  como parâmetro as informações necessárias para realizar o login na aplicação, além do identificador da sessão gerado anteriormente.
+</p>
+<p><strong><em>Exemplo de requisição</em></strong></p>
+<pre><code class="http">  POST  http://host-da-api/login
+</code></pre>
+
+<p><strong><em>Exemplo de requisição</em></strong></p>
+<pre><code class="json">  {
+    &quot;session_id&quot;: &quot;ABCDE12345&quot;,
+    &quot;login&quot;: &quot; 0333333&quot;,
+    &quot;senha&quot;: &quot; 0333333&quot;,
+    &quot;captcha&quot;: &quot; i3ae&quot;
+  }
+</code></pre>
+
+<ul>
+<li>session_id: O mesmo identificador gerado anteriormente</li>
+<li>login: Matrículo do aluno começando com o número 0</li>
+<li>senha: Senha do aluno do sistema</li>
+<li>captcha: Valor do captcha após visualização da imagem em uma aplicação frontend</li>
+</ul>
+
+<p>Caso o login seja realizado com sucesso, a API irá retornar as seguintes informações: </p>
+<pre><code class="json">  {
+    &quot;message&quot;: &quot;Login realizado com sucesso&quot;,
+    &quot;session_id&quot;: &quot;ABCDE12345&quot;,
+  }
+</code></pre>
+<p>Caso o login tenha falhado, a API irá retornar um erro 403 com o seguinte valor: </p>
+<pre><code class="json">  {
+    &quot;authentication_error&quot;: &quot;Erro ao realizar autenticação&quot;,
+  }
+</code></pre>
+<h2 id="obtendo-informacoes-do-aluno">Obtendo atividades complementares do aluno</h2>
+<p>Somente será possível obter as atividades complementares do aluno após a realização do login, tendo em mãos o identificador da sessão</p>
+<p><strong><em>Exemplo de requisição</em></strong></p>
+<pre><code class="http">  GET  http://host-da-api/atividades-complementares?session_id=ABCDE12345
+</code></pre>
+<p><strong><em>Exemplo de retorno de sucesso</em></strong></p>
+<pre><code class="json">  {
+    &quot;student_name&quot;: &quot;Fulando de Tal da Silva&quot;,
+    &quot;total_hours&quot;: &quot;104&quot;,
+    &quot;categories&quot;: [
+      {
+        &quot;name&quot;: &quot;Bolsa de Extensão e Iniciação Acadêmica&quot;,
+        &quot;activities&quot;: {
+          &quot;name&quot;: &quot;Bolsa de Monitoria&quot;,
+          &quot;status&quot;: &quot;REALIZADA&quot;,
+          &quot;professor&quot;: &quot;Snape&quot;,
+          &quot;hours&quot;: &quot;96&quot;
+        } 
+      },
+      {
+        &quot;name&quot;: &quot;Eventos&quot;,
+        &quot;activities&quot;: {
+          &quot;name&quot;: &quot;Flisol&quot;,
+          &quot;status&quot;: &quot;REALIZADA&quot;,
+          &quot;professor&quot;: &quot;Snape&quot;,
+          &quot;hours&quot;: &quot;8&quot;
+        } 
+      }
+    ]
+  }
+</code></pre>
+<p>Caso o identificador da sessão seja inválido ou tenha expirado, um erro 403 será lançado com a seguinte mensagem:</p>
+<p><strong><em>Exemplo de retorno de sucesso</em></strong></p>
+<pre><code class="json">  {
+    &quot;login_required&quot;: &quot;Esta seção de usuário não está logada&quot;,
+  }
+</code></pre> 
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../tecnologies/" class="btn btn-neutral float-right" title="Tecnologias">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Início"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/brunobarretofreitas/sisac-api" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../tecnologies/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+
+</body>
+</html>

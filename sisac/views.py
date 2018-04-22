@@ -1,6 +1,12 @@
 from rest_framework import views
 from rest_framework.response import Response
-from rest_framework.validators import ValidationError
+from rest_framework.validators import(
+    ValidationError,
+)
+from rest_framework.exceptions import (
+    AuthenticationFailed,
+    NotAuthenticated
+)
 from .sisac_client import (
     SisacApiClient,
     SisacApiSettings,
@@ -40,7 +46,7 @@ class LoginPageView(views.APIView):
             self.sisac_client.login(session_id, student_id, password, captcha)
             return Response(status=200,data={"message": "Login realizado com sucesso", "session_id": session_id})
         except AuthenticationErrorException:
-            raise ValidationError({"authentication_error": "Erro ao realizar autenticação"})
+            raise AuthenticationFailed({"authentication_error": "Erro ao realizar autenticação"})
 
 class HomePageView(views.APIView):
     
@@ -57,4 +63,4 @@ class HomePageView(views.APIView):
             sisac_data = self.sisac_client.home_page(session_id)
             return Response(sisac_data)
         except AuthenticationErrorException:
-            raise ValidationError({"login_required": "Esta sessão de usuário não está logada"})
+            raise NotAuthenticated({"login_required": "Esta sessão de usuário não está logada"})

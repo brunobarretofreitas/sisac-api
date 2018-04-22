@@ -38,7 +38,6 @@ class SisacApiClient:
             "session_id": sisac_request.cookies[self.settings.SISAC_COOKIE_ID],
             "captcha_image": self.get_captcha_image(dict(JSESSIONID=sisac_request.cookies[self.settings.SISAC_COOKIE_ID]))
         }
-
         return response
 
     def login(self, session_id, student_id, password, captcha):
