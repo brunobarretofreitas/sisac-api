@@ -15,22 +15,32 @@ from .sisac_client import (
 
 from django.views.decorators.csrf import csrf_exempt
 
+from .settings import API_SECRET_KEY
+
+def validate_request(**kwargs):
+    error_message = []
+    for key, val in kwargs.items():
+        if not val:
+            error_message.append({key: "Este campo é obrigatório"})
+        if len(error_message):
+            raise ValidationError({"error": error_message})
+
+    if kwargs.get('token', None) != API_SECRET_KEY:
+        raise ValidationError({"token": "Token Inválido"})
+
+
 @csrf_exempt
 class LoginPageView(views.APIView):
 
     def __init__(self):
         self.sisac_client = SisacApiClient()
         self.sisac_settings = SisacApiSettings()
-
-    def validate_request(self, **kwargs):
-        error_message = []
-        for key, val in kwargs.items():
-            if not val:
-                error_message.append({key: "Este campo é obrigatório"})
-        if len(error_message):
-            raise ValidationError({"error": error_message})
+        
 
     def get(self, request, format=None):
+        token = request.query_params.get('token', None)
+
+        validate_request(token=token)
         login_page_attributes = self.sisac_client.login_page()
         return Response(login_page_attributes)
 
@@ -39,8 +49,9 @@ class LoginPageView(views.APIView):
         student_id = request.data.get('login')
         password = request.data.get('senha')
         captcha = request.data.get('captcha')
+        token = request.data.get('token', None)
 
-        self.validate_request(session_id=session_id, student_id=student_id, password=password, captcha=captcha)
+        validate_request(session_id=session_id, student_id=student_id, password=password, captcha=captcha, token=token)
 
         try:
             self.sisac_client.login(session_id, student_id, password, captcha)
@@ -55,6 +66,11 @@ class HomePageView(views.APIView):
         self.sisac_settings = SisacApiSettings()
     
     def get(self, request, format=None):
+        session_id = request.query_params.get('session_id', None)
+        token = request.query_params.get('token', None)
+
+        validate_request(token=token, session_id=session_id)
+
         session_id = request.query_params.get('session_id')
         if not session_id:
             raise ValidationError({"session_id": "É necessário informar o id da sessão"})
