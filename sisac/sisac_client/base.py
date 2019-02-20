@@ -58,7 +58,7 @@ class SisacApiClient:
         if sisac_request.url != self.settings.SISAC_HOME_URL or "Tipo de conta" in str(sisac_request.content):
             raise AuthenticationErrorException()
         else:
-            sisac_parser = SisacParser(sisac_request.content)
+            sisac_parser = SisacParser(sisac_request.text)
             return {
                 "student_name" : sisac_parser.student_name,
                 "total-hours"  : sisac_parser.total_hours,
