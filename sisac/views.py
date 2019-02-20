@@ -49,7 +49,7 @@ class LoginPageView(views.APIView):
         student_id = request.data.get('login')
         password = request.data.get('senha')
         captcha = request.data.get('captcha')
-        token = request.data.get('token', None)
+        token = request.query_params.get('token', None)
 
         validate_request(session_id=session_id, student_id=student_id, password=password, captcha=captcha, token=token)
 
