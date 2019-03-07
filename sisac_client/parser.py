@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import re
+from inflection import titleize
 
 class SisacParser:
 
@@ -30,7 +31,7 @@ class SisacParser:
         return self.__total_hours
 
     def __get_student_name(self):
-        self.__student_name = self.soup.div.find(id="opc_usuario").h1.string
+        self.__student_name = titleize(self.soup.div.find(id="opc_usuario").h1.string[10:])
     
     def __get_total_hours(self):
         self.__total_hours = self.soup.find_all('h2', text=re.compile(r'\bTotal de Horas em Atividades Complementares\b'))[0].string[45:]

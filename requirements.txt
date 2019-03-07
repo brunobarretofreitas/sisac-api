@@ -1,7 +1,6 @@
-Django
-djangorestframework
-markdown
-django-filter
 pybase64
 requests
 beautifulsoup4
+Flask
+inflection
+python-dotenv

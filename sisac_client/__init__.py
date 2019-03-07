@@ -1,10 +1,11 @@
 from .base import SisacApiClient
 from .parser import SisacParser
-from .settings import SisacApiSettings, AuthenticationErrorException
+from .settings import SisacSettings
+from .exceptions import AuthenticationErrorException
 
 __all__ = [
     'SisacApiClient',
-    'SisacApiSettings',
+    'SisacSettings',
     'AuthenticationErrorException',
     'SisacParser',
 ]
