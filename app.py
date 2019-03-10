@@ -1,4 +1,6 @@
 from flask import Flask, Response, jsonify, request
+from flask_cors import CORS
+
 import requests
 import json
 import os
@@ -7,14 +9,16 @@ from dotenv import load_dotenv
 from sisac_client import SisacApiClient, SisacSettings, AuthenticationErrorException
 
 app = Flask(__name__)
+
+
 sisac_api_client = SisacApiClient()
 load_dotenv()
 
 # Função para retornar mensagem padrão de timeout
 def timeout_error():
-    return {
+    return jsonify({
         'message': SisacSettings.TIMEOUT_ERROR
-    }, 408
+    }), 504
 
 # Função para validar a API_KEY
 def valid_api_key(request_data):
@@ -30,20 +34,17 @@ def valid_api_key(request_data):
 def login_credentials():
     # Validando o API_KEY
     if not valid_api_key(request.args):
-        return jsonify({
+        data = jsonify({
             'message': 'É necessário informar uma api_key válida'
-        }), 400
+        })
 
+        return data, 400
+    
     try:
         data = sisac_api_client.get_login_credentials()
-        return jsonify(data), 200
-    except requests.exceptions.ConnectTimeout:
-        data = {
-            'message': SisacSettings.TIMEOUT_ERROR
-        }
-
-        return jsonify(data), 408
-
+        return Response(response=jsonify(data), status=200, mimetype='application/json')
+    except requests.exceptions.ReadTimeout:
+        return timeout_error()
 # Rota para realizar login na aplicação
 @app.route("/login", methods=['POST'])
 def login():
@@ -67,8 +68,8 @@ def login():
             'message': 'Login realizado com sucesso',
             **data
         }), 200
-    except requests.exceptions.ConnectTimeout:
-        data, status_code = timeout_error()
+    except requests.exceptions.ReadTimeout:
+        return timeout_error()
     except AuthenticationErrorException:
         status_code = 400
         data = {
@@ -98,8 +99,8 @@ def logout():
         data = {
             'message': 'Logout realizado com sucesso'
         }
-    except requests.exceptions.ConnectTimeout:
-        data, status_code = timeout_error()
+    except requests.exceptions.ReadTimeout:
+        return timeout_error()
     except KeyError:
         status_code = 400
         data = {
@@ -120,8 +121,8 @@ def atividades_complementares():
     try:
         status_code = 200
         data = sisac_api_client.atividades_complementares(request.args.get('session_id'))
-    except requests.exceptions.ConnectTimeout:
-        data, status_code = timeout_error()
+    except requests.exceptions.ReadTimeout:
+        return timeout_error()
     except AuthenticationErrorException:
         status_code = 400
         data = {
@@ -133,6 +134,6 @@ def atividades_complementares():
 
 if __name__ == '__main__':
     if os.getenv("API_KEY"):
-        app.run()
+        app.run(host="0.0.0.0")
     else:
         raise Exception('.env API_KEY not found')

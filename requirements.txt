@@ -4,3 +4,4 @@ beautifulsoup4
 Flask
 inflection
 python-dotenv
+flask-cors
