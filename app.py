@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from sisac_client import SisacApiClient, SisacSettings, AuthenticationErrorException
 
 app = Flask(__name__)
+app.config('JSON_AS_ASCII') = False
+CORS(app)
 
 
 sisac_api_client = SisacApiClient()
@@ -42,7 +44,7 @@ def login_credentials():
     
     try:
         data = sisac_api_client.get_login_credentials()
-        return Response(response=jsonify(data), status=200, mimetype='application/json')
+        return jsonify(data), 200
     except requests.exceptions.ReadTimeout:
         return timeout_error()
 # Rota para realizar login na aplicação
